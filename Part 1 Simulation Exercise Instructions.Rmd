@@ -1,0 +1,99 @@
+---
+title: "Part 1 Simulation Exercise from Statistical Inference Coursera Course Project"
+author: "Javier Chang"
+date: "8/8/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+```
+
+## Overview
+
+In this project we will investigate the exponential distribution in R and compare it with the Central Limit Theorem. We will illustrated via a thousand simulation the properties of the distribution of the mean of 40 exponentials setting lambda=0.2. We will
+
+1. Show the sample mean and compare it to the theoretical mean of the distribution.
+2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+3. Show that the distribution is approximately normal.
+
+## Simulations
+
+A thousand simulations of the averages of 40 random exponentials were generated using R function *rexp(n, lambda)*. lambda was set to 0.2 for all of the simulations and the results were stored in the vector *simMeans*.
+
+```{r simulation}
+## Parameters
+lambda <- 0.2; n <- 1000; N <- 40
+## Simulation
+set.seed(12345)
+simRdmExpo <- rexp(n*N, lambda)
+simMeans <- apply(matrix(simRdmExpo, n, N), 1, mean)
+```
+
+## Sample Mean versus Theoretical Mean
+
+According to the CLT and LLT the theoretical mean of the averages of random exponentials is the same as the population mean of the underlying distribution, which in this case is an exponential distribution, is 1/lambda.
+
+The sample mean is calculated with the function *mean* over the sample of averages of randoms exponentials.
+
+```{r calculate_means}
+theoretical_mean <- 1/lambda
+sample_mean <- mean(simMeans)
+knitr::kable(cbind(sample_mean, theoretical_mean, sample_mean-theoretical_mean), 
+             digits=2, 
+             col.names = c("Sample mean", "Theoretical mean", "Difference"),
+             caption = "Sample mean vs Theoretical mean",
+             format.args = list(nsmall=4, digits=2))
+```
+
+And as we can see above both the sample mean and the theoretical mean are very close.
+
+## Sample Variance versus Theoretical Variance
+
+According to the CLT and LLT the theoretical variance of the averages of random exponentials is the same as the population variance of the underlying distribution divided by N, which in this case is an exponential distribution, is 1/lambda^2/N.
+
+The sample variance is calculated with the function *var* over the sample of averages of randoms exponentials.
+
+```{r calculate_variance}
+theoretical_variance <- 1/lambda^2/N
+sample_variance <- var(simMeans)
+knitr::kable(cbind(sample_variance, theoretical_variance, sample_variance-theoretical_variance), 
+             col.names = c("Sample variance", "Theoretical variance", "Difference"),
+             caption = "Sample variance vs Theoretical variance",
+             format.args = list(nsmall=4, digits=2))
+```
+
+And as we can see above both the sample variance and the theoretical variance are very close.
+
+## Distribution
+
+According to the Central Limit Theorem (CLT) the distribution of the means should be approximately normal with an expected value equal to the mean of the underlying distribution, and a variance equal to the variance of the underlying distribution divided by the sample size.
+
+As we can see in the next figure the density distribution of the sample mean is very similar to a Normal distribution with mean 1/lambda and variance 1/lambda^2.
+
+```{r plotmeans, fig.height=4}
+## Calculates the theoretical normal distribution
+xnorm <- seq(min(simMeans), max(simMeans), length.out=40)
+ynorm <- dnorm(xnorm, theoretical_mean, theoretical_variance)
+
+## Plot density of the averages and the normal distribution
+hist(simMeans,
+     main = "Distribution of the averages of 40 exponentials",
+     xlab = "averages of 40 exponentials",
+     breaks=20,
+     freq=FALSE,
+     ylim=c(0, max(ynorm))
+     )
+lines(xnorm, ynorm, pch = 22, col="red", lwd = 2, lty = 1)
+abline(v = theoretical_mean, col = "red", lwd = 2)
+legend("topright", legend = "Normal distribution", col = "red", cex = 0.8, lwd = 2, lty = 1)
+
+```
+\newpage
+## Appendix
+
+### Code for this report
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
