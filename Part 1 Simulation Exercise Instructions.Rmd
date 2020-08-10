@@ -20,15 +20,20 @@ In this project we will investigate the exponential distribution in R and compar
 
 ## Simulations
 
-A thousand simulations of the averages of 40 random exponentials were generated using R function *rexp(n, lambda)*. lambda was set to 0.2 for all of the simulations and the results were stored in the vector *simMeans*.
+A thousand simulations of the averages of 40 random exponentials were generated using R function *rexp(n, lambda)*. lambda was set to 0.2 for all of the simulations and the results were stored in the vector *simMeans*. A histogram of the distribution is shown below.
 
-```{r simulation}
+```{r simulation, fig.height=3}
 ## Parameters
 lambda <- 0.2; n <- 1000; N <- 40
 ## Simulation
 set.seed(12345)
 simRdmExpo <- rexp(n*N, lambda)
 simMeans <- apply(matrix(simRdmExpo, n, N), 1, mean)
+## Plot histogram
+hist(simMeans,
+     main = "Distribution of 1000 averages of 40 exponentials",
+     xlab = "averages", breaks=20, freq=TRUE
+     )
 ```
 
 ## Sample Mean versus Theoretical Mean
@@ -48,6 +53,20 @@ knitr::kable(cbind(sample_mean, theoretical_mean, sample_mean-theoretical_mean),
 ```
 
 And as we can see above both the sample mean and the theoretical mean are very close.
+
+```{r graph_means, fig.height=3}
+hist(simMeans,
+     main = "Sample mean vs Theoretical mean",
+     xlab = "averages",
+     breaks=20,
+     freq=TRUE
+     )
+abline(v = theoretical_mean, col = "red", lwd = 2)
+abline(v = sample_mean, col="BLUE", lwd=2)
+legend("topright", legend = c("Theoretical mean", "Sample mean"), 
+       col = c("red", "blue"), cex = 0.8, lwd = 2, lty = 1)
+```
+
 
 ## Sample Variance versus Theoretical Variance
 
@@ -79,15 +98,12 @@ ynorm <- dnorm(xnorm, theoretical_mean, theoretical_variance)
 
 ## Plot density of the averages and the normal distribution
 hist(simMeans,
-     main = "Distribution of the averages of 40 exponentials",
-     xlab = "averages of 40 exponentials",
-     breaks=20,
-     freq=FALSE,
-     ylim=c(0, max(ynorm))
+     main = "Density distribution vs Normal distribution",
+     xlab = "averages", breaks=20, freq=FALSE, ylim=c(0, max(ynorm))
      )
 lines(xnorm, ynorm, pch = 22, col="red", lwd = 2, lty = 1)
-abline(v = theoretical_mean, col = "red", lwd = 2)
-legend("topright", legend = "Normal distribution", col = "red", cex = 0.8, lwd = 2, lty = 1)
+legend("topright", legend = c("Normal distribution", "Density distribution"), 
+       col = c("red", "black"), cex = 0.8, lwd = 2, lty = 1)
 
 ```
 \newpage
