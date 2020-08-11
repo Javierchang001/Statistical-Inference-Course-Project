@@ -97,6 +97,7 @@ xnorm <- seq(min(simMeans), max(simMeans), length.out=40)
 ynorm <- dnorm(xnorm, theoretical_mean, theoretical_variance)
 
 ## Plot density of the averages and the normal distribution
+##hist(simRdmExpo, freq=FALSE, col="grey")
 hist(simMeans,
      main = "Density distribution vs Normal distribution",
      xlab = "averages", breaks=20, freq=FALSE, ylim=c(0, max(ynorm))
@@ -106,6 +107,13 @@ legend("topright", legend = c("Normal distribution", "Density distribution"),
        col = c("red", "black"), cex = 0.8, lwd = 2, lty = 1)
 
 ```
+
+Additionally, the Quantile-Quantile (Q-Q) plot compares the averages distribution to a normal distribution to confirm that both are very similar.
+
+```{r qqplot, fig.height=3}
+qqnorm(simMeans); qqline(simMeans)
+```
+
 \newpage
 ## Appendix
 
